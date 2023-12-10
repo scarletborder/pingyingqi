@@ -83,14 +83,13 @@ func (s *server) PyPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.Exl
 	cmd.Dir = tempPath
 	var outBut bytes.Buffer
 	cmd.Stdout = io.MultiWriter(io.Discard, &outBut)
-	proTimer := time.NewTimer(3 * time.Second)
+	proTimer := time.NewTimer(time.Duration(config.EnvCfg.MaximumDelay) * time.Second)
 	defer proTimer.Stop()
 
 	err = cmd.Start()
 	if err != nil {
 		return &myrpc.ExlangResp{Data: err.Error(), Code: 1}, nil
 	}
-	var data string
 
 	// 逻辑，先开协程跑并有wait，wait完外部直接break，外部计时器如果触发也可以break
 	var done chan bool = make(chan bool, 1)
@@ -104,11 +103,14 @@ func (s *server) PyPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.Exl
 		select {
 		case <-proTimer.C:
 			cmd.Process.Kill()
-			data = outBut.String()
-			return &myrpc.ExlangResp{Data: data, Code: 3}, nil
+			return &myrpc.ExlangResp{Data: outBut.String(), Code: 3}, nil
 		case <-done:
-			data = outBut.String()
-			return &myrpc.ExlangResp{Data: data, Code: 0}, nil
+			return &myrpc.ExlangResp{Data: outBut.String(), Code: 0}, nil
+		default:
+			if len(outBut.String()) > config.EnvCfg.MaximumOutput {
+				cmd.Process.Kill()
+				return &myrpc.ExlangResp{Data: outBut.String(), Code: 0}, nil
+			}
 		}
 	}
 }
@@ -209,14 +211,13 @@ func (s *server) GoPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.Exl
 	cmd.Dir = tempPath
 	var outBut bytes.Buffer
 	cmd.Stdout = io.MultiWriter(io.Discard, &outBut)
-	proTimer := time.NewTimer(3 * time.Second)
+	proTimer := time.NewTimer(time.Duration(config.EnvCfg.MaximumDelay) * time.Second)
 	defer proTimer.Stop()
 
 	err = cmd.Start()
 	if err != nil {
 		return &myrpc.ExlangResp{Data: err.Error(), Code: 1}, nil
 	}
-	var data string
 
 	// 逻辑，先开协程跑并有wait，wait完外部直接break，外部计时器如果触发也可以break
 	var done chan bool = make(chan bool, 1)
@@ -230,11 +231,14 @@ func (s *server) GoPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.Exl
 		select {
 		case <-proTimer.C:
 			cmd.Process.Kill()
-			data = outBut.String()
-			return &myrpc.ExlangResp{Data: data, Code: 3}, nil
+			return &myrpc.ExlangResp{Data: outBut.String(), Code: 3}, nil
 		case <-done:
-			data = outBut.String()
-			return &myrpc.ExlangResp{Data: data, Code: 0}, nil
+			return &myrpc.ExlangResp{Data: outBut.String(), Code: 0}, nil
+		default:
+			if len(outBut.String()) > config.EnvCfg.MaximumOutput {
+				cmd.Process.Kill()
+				return &myrpc.ExlangResp{Data: outBut.String(), Code: 0}, nil
+			}
 		}
 	}
 

@@ -14,7 +14,9 @@ type envConfig struct {
 	ListenHost string `env:"LISTEN_HOST" envDefault:"127.0.0.1"`
 	ListenPort uint16 `env:"LISTEN_PORT" envDefault:"28000"`
 
-	DefaultDir string `env:"DEFAULT_DIR" envDefault:"./temp"`
+	DefaultDir    string `env:"DEFAULT_DIR" envDefault:"./temp"`
+	MaximumOutput int    `env:"MAXIMUM_OUTPUT" envDefault:"5700"`
+	MaximumDelay  int    `env:"MAXIMUM_DELAY" envDefault:"3"`
 
 	RedisAddr     string `env:"REDIS_ADDR" envDefault:"127.0.0.1:6379"`
 	RedisPassword string `env:"REDIS_PASSWORD" envDefault:""`
