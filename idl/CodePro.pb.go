@@ -85,9 +85,9 @@ type CodeProResp struct {
 	// 运行的输出结果及编译运行错误信息或报告内部错误信息
 	Data string `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	// 运行状态
-	// 0 - 编译运行成功
-	// 1 - 内部错误，由服务的bug导致，你可以在 https://github.com/scarletborder/pingyingqi/issues 中上报
-	// 2 - 代码引入了被禁止的模块(库/包)
+	// 0 - 编译运行成功  
+	// 1 - 内部错误，由服务的bug导致，你可以在 https://github.com/scarletborder/pingyingqi/issues 中上报  
+	// 2 - 代码引入了被禁止的模块(库/包)  
 	// 3 - 编译运行成功但是运行时间过长
 	Code int32 `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
 }

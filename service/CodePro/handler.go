@@ -2,10 +2,11 @@ package CodePro
 
 import (
 	"context"
-	"strings"
-
+	"pingyingqi/config"
 	myrpc "pingyingqi/idl"
+	cm "pingyingqi/models/CodeManual"
 	redis2 "pingyingqi/redis"
+	"strings"
 )
 
 /*
@@ -20,11 +21,24 @@ type server struct {
 }
 
 func (s *server) CodePro(ctx context.Context, in *myrpc.CodeProRequest) (*myrpc.CodeProResp, error) {
+	var data string
+	var code int32
+	var err error = nil
 	// 如果config设置优先ai，那么直接丢给ai
+	if config.EnvCfg.CompilerQueue == 1 {
+		// ai()
+		return &myrpc.CodeProResp{Data: "还没做好ai功能", Code: 1}, err
+	}
 
 	// 人工CodeManual
+	if cm.CodeMan.CouldProgram(in.Lang) {
+		data, code, err = cm.CodeMan.Exec(in.Code, in.Lang)
+		return &myrpc.CodeProResp{Data: data, Code: code}, err
+	}
 
 	// 缺省CodeAi
+	// ai()
+	return &myrpc.CodeProResp{Data: "还没做好ai功能", Code: 1}, err
 }
 
 func (s *server) Dislike(ctx context.Context, in *myrpc.DislikedPackage) (*myrpc.DislikedResp, error) {
