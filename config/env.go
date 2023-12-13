@@ -25,6 +25,12 @@ type envConfig struct {
 	RedisDB       int    `env:"REDIS_DB" envDefault:"0"`
 	RedisMaster   string `env:"REDIS_MASTER"`
 
+	AiserviceProvider string `env:"AISERVICE_PROVIDER" envDefault:"nil"`
+	AiserviceKey1     string `env:"AISERVICE_KEY1"`
+	AiserviceKey2     string `env:"AISERVICE_KEY2"`
+	AiserviceKey3     string `env:"AISERVICE_KEY3"`
+	AiserviceKey4     string `env:"AISERVICE_KEY4"`
+
 	SuperUser uint64 `env:"SUPER_USER" envDefault:"1581822568"`
 }
 
