@@ -1,4 +1,4 @@
-package exlang
+package codemanual
 
 import (
 	"bytes"
@@ -7,25 +7,12 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"pingyingqi/config"
 	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"scarletborders.top/pingyingqi/config"
-	myrpc "scarletborders.top/pingyingqi/idl"
-	redis2 "scarletborders.top/pingyingqi/redis"
 )
-
-/*
-code:
-- 0 success
-- 1 inner wrong
-- 2 illegal code
-*/
-
-type server struct {
-	myrpc.UnimplementedExlangProgramerServer
-}
 
 func (s *server) PyPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.ExlangResp, error) {
 	// cmd := exec.Command("python3")
@@ -244,26 +231,4 @@ func (s *server) GoPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.Exl
 		}
 	}
 
-}
-
-func (s *server) Dislike(ctx context.Context, in *myrpc.DislikedPackage) (*myrpc.DislikedResp, error) {
-	rawstr := in.GetPack()
-	modstr := strings.Split(rawstr, ";")
-	if modstr[0] == "0" {
-		// pass
-		_, err := redis2.Client.SRem(ctx, "dislike", modstr[1]).Result()
-		if err != nil {
-			return &myrpc.DislikedResp{Data: err.Error(), Code: 1}, nil
-		} else {
-			return &myrpc.DislikedResp{Data: "successfully pass", Code: 0}, nil
-		}
-	} else {
-		// block
-		_, err := redis2.Client.SAdd(ctx, "dislike", modstr[1]).Result()
-		if err != nil {
-			return &myrpc.DislikedResp{Data: err.Error(), Code: 1}, nil
-		} else {
-			return &myrpc.DislikedResp{Data: "successfully block", Code: 0}, nil
-		}
-	}
 }

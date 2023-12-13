@@ -3,10 +3,11 @@ package main
 import (
 	"os"
 
+	config "pingyingqi/config"
+	_ "pingyingqi/redis"
+	CodePro "pingyingqi/service/CodePro"
+
 	"github.com/sirupsen/logrus"
-	"scarletborders.top/pingyingqi/config"
-	exlang "scarletborders.top/pingyingqi/exlang"
-	_ "scarletborders.top/pingyingqi/redis"
 )
 
 func main() {
@@ -16,5 +17,5 @@ func main() {
 			logrus.Println(err)
 		}
 	}()
-	exlang.Exlanglis()
+	CodePro.CodeProListen()
 }

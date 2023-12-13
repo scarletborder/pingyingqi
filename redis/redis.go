@@ -3,9 +3,10 @@ package redis
 import (
 	"strings"
 
+	"pingyingqi/config"
+
 	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
-	"scarletborders.top/pingyingqi/config"
 )
 
 var Client redis.UniversalClient

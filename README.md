@@ -1,7 +1,8 @@
 # 凭依绮在线Code
 RPC微服务
 ## 示例
-以下内容都是从作者的一个nonebot2插件扣下来的部分
+**当前示例内容为v0.0.1，接口已经在v1.0.0_alpha_a1后调整**   
+以下内容都是从作者的一个nonebot2插件扣下来的部分  
 ### GoPro() and PyPro()
 ```py
 channel = grpc.insecure_channel("127.0.0.1:28966")

@@ -1,4 +1,4 @@
-module scarletborders.top/pingyingqi
+module pingyingqi
 
 go 1.21.5
 

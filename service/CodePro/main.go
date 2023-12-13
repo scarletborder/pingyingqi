@@ -1,4 +1,4 @@
-package exlang
+package CodePro
 
 import (
 	"context"
@@ -7,11 +7,13 @@ import (
 	"os"
 	"path"
 
+	myrpc "pingyingqi/idl"
+
+	"pingyingqi/config"
+	"pingyingqi/redis"
+
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"scarletborders.top/pingyingqi/config"
-	myrpc "scarletborders.top/pingyingqi/idl"
-	"scarletborders.top/pingyingqi/redis"
 )
 
 func init() {
@@ -30,13 +32,13 @@ func init() {
 	logrus.Println("已经创建文件夹了", dir)
 }
 
-func Exlanglis() {
+func CodeProListen() {
 	lis, err := net.Listen("tcp", config.EnvCfg.ListenHost+":"+fmt.Sprint(config.EnvCfg.ListenPort))
 	if err != nil {
 		logrus.Fatalln("rpc fail to listen:", err)
 	}
 	s := grpc.NewServer()
-	myrpc.RegisterExlangProgramerServer(s, &server{})
+	myrpc.RegisterCodeProProgramerServer(s, &server{})
 	logrus.Println("ready to serve", config.EnvCfg.ListenHost+":"+fmt.Sprint(config.EnvCfg.ListenPort))
 	err = s.Serve(lis)
 

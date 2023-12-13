@@ -14,6 +14,8 @@ type envConfig struct {
 	ListenHost string `env:"LISTEN_HOST" envDefault:"127.0.0.1"`
 	ListenPort uint16 `env:"LISTEN_PORT" envDefault:"28000"`
 
+	CompilerQueue int `env:"COMPILERQUEUE" envDefault:"1"`
+
 	DefaultDir    string `env:"DEFAULT_DIR" envDefault:"./temp"`
 	MaximumOutput int    `env:"MAXIMUM_OUTPUT" envDefault:"5700"`
 	MaximumDelay  int    `env:"MAXIMUM_DELAY" envDefault:"3"`

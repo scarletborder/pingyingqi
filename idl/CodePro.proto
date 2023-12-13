@@ -1,0 +1,44 @@
+syntax = "proto3";
+option go_package = "pingyingqi/rpc";
+
+message CodeProRequest{
+    // 需要编译运行的代码
+    string code = 1;
+    // 代码的语言
+    string lang = 2;
+}
+
+message CodeProResp{
+    // 运行的输出结果及编译运行错误信息或报告内部错误信息
+    string data = 1;
+    /* 运行状态
+    * 0 - 编译运行成功
+    * 1 - 内部错误，由服务的bug导致，你可以在 https://github.com/scarletborder/pingyingqi/issues 中上报
+    * 2 - 代码引入了被禁止的模块(库/包)
+    * 3 - 编译运行成功但是运行时间过长
+    */
+    int32 code = 2;
+}
+
+message DislikedPackage{
+    // 包的名称
+    string pack = 1;
+    /* 你想设置的状态
+    * True - 可用pass
+    * False - 不可用blocked
+    */
+    bool status = 2;
+}
+
+message DislikedResp{
+    string data = 1;
+    int32 code = 2;
+}
+
+service CodeProProgramer{
+    // [Main], CodePro service
+    rpc CodePro (CodeProRequest) returns (CodeProResp);
+    
+    // 全局禁用某个完全匹配字段的包
+    rpc Dislike (DislikedPackage) returns (DislikedResp);
+}
