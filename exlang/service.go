@@ -236,7 +236,9 @@ func (s *server) GoPro(ctx context.Context, in *myrpc.ExlangRequest) (*myrpc.Exl
 			return &myrpc.ExlangResp{Data: outBut.String(), Code: 0}, nil
 		default:
 			if len(outBut.String()) > config.EnvCfg.MaximumOutput {
-				cmd.Process.Kill()
+				logrus.Println("kill")
+				err = cmd.Process.Kill()
+				logrus.Println(err)
 				return &myrpc.ExlangResp{Data: outBut.String(), Code: 0}, nil
 			}
 		}
