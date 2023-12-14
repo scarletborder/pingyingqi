@@ -8,13 +8,13 @@ type Tongyi struct {
 	// https://help.aliyun.com/zh/dashscope/developer-reference/activate-dashscope-and-create-an-api-key
 }
 
-func NewTongyi(Api_Key string) Tongyi {
-	return Tongyi{serviceName: "通义千问", website: "https://qianwen.aliyun.com/", api_key: Api_Key}
+func NewTongyi(Api_Key string) *Tongyi {
+	return &Tongyi{serviceName: "通义千问", website: "https://qianwen.aliyun.com/", api_key: Api_Key}
 }
-func (t Tongyi) GetServiceName() string {
+func (t *Tongyi) GetServiceName() string {
 	return t.serviceName
 }
 
-func (t Tongyi) Prompt(string) string {
+func (t *Tongyi) Prompt(string) (string, error) {
 	return "123"
 }

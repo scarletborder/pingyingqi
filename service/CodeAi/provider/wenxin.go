@@ -10,17 +10,17 @@ type Wenxin struct {
 	access_token string
 }
 
-func NewWenxin(Api_Key string, Secret_Key string) (Wenxin, error) {
+func NewWenxin(Api_Key string, Secret_Key string) (*Wenxin, error) {
 	// 过期自动更新
 	// go Ticker
 	err := errors.New("fail")
-	return Wenxin{serviceName: "文心一言", website: "https://yiyan.baidu.com/"}, err
+	return &Wenxin{serviceName: "文心一言", website: "https://yiyan.baidu.com/"}, err
 }
 
-func (w Wenxin) GetServiceName() string {
+func (w *Wenxin) GetServiceName() string {
 	return w.serviceName
 }
 
-func (w Wenxin) Prompt(string) string {
+func (w *Wenxin) Prompt(string) (string, error) {
 	return "123"
 }

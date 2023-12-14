@@ -25,10 +25,10 @@ type envConfig struct {
 	RedisDB       int    `env:"REDIS_DB" envDefault:"0"`
 	RedisMaster   string `env:"REDIS_MASTER"`
 
-	AiserviceProvider string `env:"AISERVICE_PROVIDER" envDefault:"nil"`
-	WenxinApiKey      string `env:"WENXIN_API_KEY"`
-	WenxinSecretKey   string `env:"WENXIN_SECRET_KEY"`
-	TongyiApiKey      string `env:"TONGYI_API_KEY"`
+	DefaultProvider string `env:"DEFAULT_PROVIDER" envDefault:"nil"`
+	WenxinApiKey    string `env:"WENXIN_API_KEY" envDefault:"nil"`
+	WenxinSecretKey string `env:"WENXIN_SECRET_KEY" envDefault:"nil"`
+	TongyiApiKey    string `env:"TONGYI_API_KEY" envDefault:"nil"`
 
 	LoggerLevel string `env:"LOGGERLEVEL" envDefault:"DEBUG"`
 	SuperUser   uint64 `env:"SUPER_USER" envDefault:"1581822568"`
@@ -36,7 +36,7 @@ type envConfig struct {
 
 func init() {
 	logrus.Println(os.Getwd())
-	if err := godotenv.Load("./config/my.env"); err != nil {
+	if err := godotenv.Load("./config/.env.config"); err != nil {
 		logrus.Errorln("Can not read env from file system, please check the right this program owned.")
 	}
 

@@ -61,4 +61,5 @@ func init() {
 	}
 
 	LogFilePath = "./log/" + time.Now().Format("15_04_05") + ".log"
+	log.AddHook(&FileLogHook{})
 }
