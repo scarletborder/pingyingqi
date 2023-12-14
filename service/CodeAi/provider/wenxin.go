@@ -1,5 +1,7 @@
 package provider
 
+import "errors"
+
 type Wenxin struct {
 	serviceName  string
 	website      string
@@ -8,20 +10,17 @@ type Wenxin struct {
 	access_token string
 }
 
-func NewWenxin(Api_Key string, Secret_Key string) Wenxin {
+func NewWenxin(Api_Key string, Secret_Key string) (Wenxin, error) {
 	// 过期自动更新
 	// go Ticker
-
-	return Wenxin{serviceName: "文心一言", website: "https://yiyan.baidu.com/"}
+	err := errors.New("fail")
+	return Wenxin{serviceName: "文心一言", website: "https://yiyan.baidu.com/"}, err
 }
 
 func (w Wenxin) GetServiceName() string {
 	return w.serviceName
 }
 
-func (w Wenxin) Authme(...interface{}) {
-
-}
 func (w Wenxin) Prompt(string) string {
 	return "123"
 }

@@ -4,8 +4,8 @@ import (
 	"os"
 
 	config "pingyingqi/config"
-	_ "pingyingqi/redis"
 	CodePro "pingyingqi/service/CodePro"
+	_ "pingyingqi/utils/redis"
 
 	"github.com/sirupsen/logrus"
 )

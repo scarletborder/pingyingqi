@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"path"
 	"pingyingqi/config"
-	redis2 "pingyingqi/redis"
+	redis2 "pingyingqi/utils/redis"
 	"strings"
 	"time"
 

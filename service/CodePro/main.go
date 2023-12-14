@@ -10,7 +10,7 @@ import (
 	myrpc "pingyingqi/idl"
 
 	"pingyingqi/config"
-	"pingyingqi/redis"
+	"pingyingqi/utils/redis"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

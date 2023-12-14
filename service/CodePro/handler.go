@@ -5,7 +5,7 @@ import (
 	"pingyingqi/config"
 	myrpc "pingyingqi/idl"
 	cm "pingyingqi/models/CodeManual"
-	redis2 "pingyingqi/redis"
+	redis2 "pingyingqi/utils/redis"
 	"strings"
 )
 

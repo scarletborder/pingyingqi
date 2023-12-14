@@ -14,9 +14,6 @@ func NewTongyi(Api_Key string) Tongyi {
 func (t Tongyi) GetServiceName() string {
 	return t.serviceName
 }
-func (t Tongyi) Authme(a ...interface{}) {
-
-}
 
 func (t Tongyi) Prompt(string) string {
 	return "123"
