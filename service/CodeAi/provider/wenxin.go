@@ -2,14 +2,12 @@ package provider
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"net/http"
 	"pingyingqi/config"
 	"strings"
 	"time"
-
-	"google.golang.org/protobuf/internal/errors"
 )
 
 type Wenxin struct {
@@ -57,16 +55,21 @@ type wenxinMessage struct {
 }
 
 type wenxinBody struct {
-	Messages string `json:"messages"`
-	Top_p    int    `json:"top_p"`
+	Messages string  `json:"messages"`
+	Top_p    float32 `json:"top_p"`
+}
+
+type wenxinResp struct {
+	Result string `json:"result"`
 }
 
 func (w *Wenxin) Prompt(pro string) (string, error) {
 	url := "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions?access_token=" + w.access_token
-	myMessage := wenxinMessage{Role: "user", Content: pro}
-	// 各种序列化Prompt
-	// wenxinBody()
-	payload := strings.NewReader(`{"messages":[{"role":"user","content":"Please help me output the result of the code below.\r\nYour output format and tips are here.\r\n- If the code run successfully, output the result in \"Data\" and the \"Code\" is 0.\r\n- It may exists some bug and you need to point it. If it exists bug, output the\r\nbug in \"Data\" and the \"Code\" is 1.\r\n- If the program runs into an infinite loop, the \"Code\" is 3, output partial result in \"Data\".\r\n\r\n` + "`" + `` + "`" + `` + "`" + `json\r\n{\"Code\":0,\"Data\":\"The result\"}\r\n` + "`" + `` + "`" + `` + "`" + `\r\nYou should not output other content except for the json text.\r\nAnd the code is here\r\n` + "`" + `` + "`" + `` + "`" + `golang\r\npackage main;\r\nimport \"fmt\"\r\nfunc main(){\r\n        for true{\r\n                fmt.Println(\"hello\")\r\n        }\r\n}\r\n` + "`" + `` + "`" + `` + "`" + `golang\npackage main;\nimport \"fmt\"\nfunc main(){\n\tfor true{\n\t\tfmt.Println(\"hello\")\n\t}\n}\n` + "`" + `` + "`" + `` + "`" + `"},{"role":"assistant","content":"` + "`" + `` + "`" + `` + "`" + `json\n{\"Code\":3,\"Data\":\"hello\"}\n` + "`" + `` + "`" + `` + "`" + `"}],"top_p":0.5}`)
+
+	message, err := json.Marshal(wenxinMessage{Role: "user", Content: pro})
+	payloadJson, err := json.Marshal(wenxinBody{Messages: string(message), Top_p: 0.5})
+	payload := strings.NewReader(string(payloadJson))
+
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, payload)
 
@@ -77,17 +80,23 @@ func (w *Wenxin) Prompt(pro string) (string, error) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return ``, err
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return ``, err
 	}
-	fmt.Println(string(body))
+	var wenxinresp wenxinResp
+	err = json.Unmarshal(body, &wenxinresp)
+	if err != nil {
+		return ``, err
+	}
+	if wenxinresp.Result == `` {
+		return ``, errors.New("response had no result expected")
+	}
+	return wenxinresp.Result, nil
 }
 
 type authResp struct {
