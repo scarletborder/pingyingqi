@@ -1,1 +1,11 @@
-Please help me output the result of the code below.\nYour output format and tips are here.\n- If the code run successfully, output the result in "Data" and the "Code" is 0.\n- It may exists some bug and you need to point it. If it exists bug, output the\nbug in "Data" and the "Code" is 1.\n- If the program runs into an infinite loop, the "Code" is 3, output partial result in "Data".\n```json\n{"Code":0,"Data":"The result"}\n```\nYou should not output other content except for the json text.\nAnd the code is here\n```
+Please help me output the result of the code below.  
+Your output format and tips are here.  
+- If the code run successfully, output the result in "Data" and the "Code" is 0.  
+- It may exists some bug and you need to point it. If it exists bug, output the bug in "Data" and the "Code" is 1.  
+- If the program runs into an infinite loop, the "Code" is 3, output partial result in "Data" and do not explain the reason.  
+```json  
+{"Code":0,"Data":"The result"}
+```
+You should not output other content except for the json text.  
+And the code is here  
+```

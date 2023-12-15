@@ -8,6 +8,8 @@ import (
 	"pingyingqi/config"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Wenxin struct {
@@ -19,11 +21,11 @@ type Wenxin struct {
 }
 
 func NewWenxin(Api_Key string, Secret_Key string) (*Wenxin, error) {
-	w := Wenxin{serviceName: "文心一言", website: "https://yiyan.baidu.com/"}
+	w := Wenxin{serviceName: "文心一言", website: "https://yiyan.baidu.com/", api_key: config.EnvCfg.WenxinApiKey, secret_key: config.EnvCfg.WenxinSecretKey}
 	// 过期自动更新
 	var err error
 	var exp int
-	w.access_token, err, exp = w.getAccessToken()
+	w.access_token, exp, err = w.getAccessToken()
 	if err != nil {
 		return &w, err
 	}
@@ -34,7 +36,7 @@ func NewWenxin(Api_Key string, Secret_Key string) (*Wenxin, error) {
 	go func() {
 		for {
 			<-expire_timer.C
-			w.access_token, err, exp = w.getAccessToken()
+			w.access_token, exp, err = w.getAccessToken()
 			if err != nil {
 				return
 			}
@@ -55,19 +57,19 @@ type wenxinMessage struct {
 }
 
 type wenxinBody struct {
-	Messages string  `json:"messages"`
-	Top_p    float32 `json:"top_p"`
+	Messages []wenxinMessage `json:"messages"`
+	Top_p    float32         `json:"top_p"`
 }
 
 type wenxinResp struct {
 	Result string `json:"result"`
+	ErrMsg string `json:"error_msg"`
 }
 
 func (w *Wenxin) Prompt(pro string) (string, error) {
 	url := "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions?access_token=" + w.access_token
-
-	message, err := json.Marshal(wenxinMessage{Role: "user", Content: pro})
-	payloadJson, err := json.Marshal(wenxinBody{Messages: string(message), Top_p: 0.5})
+	payloadData := wenxinBody{Messages: []wenxinMessage{{Role: "user", Content: pro}}, Top_p: 0.3}
+	payloadJson, _ := json.Marshal(&payloadData)
 	payload := strings.NewReader(string(payloadJson))
 
 	client := &http.Client{}
@@ -93,8 +95,8 @@ func (w *Wenxin) Prompt(pro string) (string, error) {
 	if err != nil {
 		return ``, err
 	}
-	if wenxinresp.Result == `` {
-		return ``, errors.New("response had no result expected")
+	if wenxinresp.ErrMsg != `` {
+		return ``, errors.New(wenxinresp.ErrMsg)
 	}
 	return wenxinresp.Result, nil
 }
@@ -110,15 +112,16 @@ type authResp struct {
  * @return string 鉴权签名信息（Access Token）
  * @return error
  */
-func (w *Wenxin) getAccessToken() (string, error, int) {
+func (w *Wenxin) getAccessToken() (string, int, error) {
 	var err error
+	logrus.Debugln("access", w.api_key, w.secret_key)
 	url := "https://aip.baidubce.com/oauth/2.0/token?client_id=" + w.api_key + "&client_secret=" + w.secret_key + "&grant_type=client_credentials"
 	payload := strings.NewReader(``)
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, payload)
 
 	if err != nil {
-		return ``, err, 0
+		return ``, 0, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
@@ -131,21 +134,21 @@ func (w *Wenxin) getAccessToken() (string, error, int) {
 		}
 	}
 	if err != nil {
-		return ``, err, 0
+		return ``, 0, err
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return ``, err, 0
+		return ``, 0, err
 	}
 	var ar authResp
 	err = json.Unmarshal(body, &ar)
 
 	if err != nil {
-		return ``, err, 0
+		return ``, 0, err
 	} else if ar.Errdesp != `` {
-		return ``, errors.New(ar.Errdesp), 0
+		return ``, 0, errors.New("Request succeed, but " + ar.Errdesp)
 	}
-	return ar.AT, nil, ar.Expires_in
+	return ar.AT, ar.Expires_in, nil
 }

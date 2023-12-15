@@ -1,3 +1,4 @@
 # 可执行文件
 *.exe
 config/*.config
+log/*

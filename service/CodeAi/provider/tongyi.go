@@ -1,5 +1,7 @@
 package provider
 
+import "errors"
+
 type Tongyi struct {
 	serviceName string
 	website     string
@@ -16,5 +18,5 @@ func (t *Tongyi) GetServiceName() string {
 }
 
 func (t *Tongyi) Prompt(myPrompt string) (string, error) {
-	
+	return ``, errors.New("没做好")
 }

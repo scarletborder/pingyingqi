@@ -43,7 +43,7 @@ func CodeProListen() {
 	err = s.Serve(lis)
 
 	if err != nil {
-		logrus.Fatalln("rpc fail to serve:", err)
+		logrus.Fatalln("rpc fail to serve:\n", err)
 		return
 	}
 }

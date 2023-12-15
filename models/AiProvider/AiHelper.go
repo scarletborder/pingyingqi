@@ -32,26 +32,31 @@ func FailOnAiProviderCreate(ServiceName string, err error) {
 func init() {
 	AiHelper = aiHelper{}
 
-	// 轮流创建Provider
-	if config.EnvCfg.TongyiApiKey != "nil" {
-		AiHelper.Provider = append(AiHelper.Provider, provider.NewTongyi(config.EnvCfg.TongyiApiKey))
-	}
-	if config.EnvCfg.WenxinApiKey != "nil" && config.EnvCfg.WenxinSecretKey != "nil" {
-		Wenxin, err := provider.NewWenxin(config.EnvCfg.WenxinApiKey, config.EnvCfg.WenxinSecretKey)
-		if err != nil {
-			FailOnAiProviderCreate("wenxin", err)
-		} else {
-			AiHelper.Provider = append(AiHelper.Provider, Wenxin)
+	if config.EnvCfg.DefaultProvider == `nil` {
+		AiHelper.Provider = append(AiHelper.Provider, provider.NewNil())
+	} else {
+		// 轮流创建Provider
+		if config.EnvCfg.TongyiApiKey != `` {
+			AiHelper.Provider = append(AiHelper.Provider, provider.NewTongyi(config.EnvCfg.TongyiApiKey))
 		}
-	}
-	AiHelper.Provider = append(AiHelper.Provider, provider.NewNil())
+		if config.EnvCfg.WenxinApiKey != `` && config.EnvCfg.WenxinSecretKey != `` {
+			Wenxin, err := provider.NewWenxin(config.EnvCfg.WenxinApiKey, config.EnvCfg.WenxinSecretKey)
+			if err != nil {
+				FailOnAiProviderCreate("wenxin", err)
+			} else {
+				AiHelper.Provider = append(AiHelper.Provider, Wenxin)
+			}
+		}
+		AiHelper.Provider = append(AiHelper.Provider, provider.NewNil())
 
-	// 交换
-	for idx := range AiHelper.Provider {
-		if AiHelper.Provider[idx].GetServiceName() == config.EnvCfg.DefaultProvider {
-			tmp := AiHelper.Provider[0]
-			AiHelper.Provider[0] = AiHelper.Provider[idx]
-			AiHelper.Provider[idx] = tmp
+		// 交换
+		for idx := range AiHelper.Provider {
+			if AiHelper.Provider[idx].GetServiceName() == config.EnvCfg.DefaultProvider {
+				tmp := AiHelper.Provider[0]
+				AiHelper.Provider[0] = AiHelper.Provider[idx]
+				AiHelper.Provider[idx] = tmp
+				break
+			}
 		}
 	}
 }
