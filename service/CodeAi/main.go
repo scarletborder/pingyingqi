@@ -22,9 +22,9 @@ func MainPrompt(code string, lang string) (string, int) {
 			FailOnAiPrompt(provider.GetServiceName(), err)
 		} else {
 			// 第一次成功就break loop
+			// 保证"nil"的prompt的err一定是nil
 			break
 		}
 	}
 	return data, statusCode
-
 }

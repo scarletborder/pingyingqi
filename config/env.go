@@ -26,6 +26,7 @@ type envConfig struct {
 	RedisMaster   string `env:"REDIS_MASTER"`
 
 	DefaultProvider string `env:"DEFAULT_PROVIDER" envDefault:"nil"`
+	MaxRetryTime    int    `env:"MAXRETRYTIME" envDefault:"1"`
 	WenxinApiKey    string `env:"WENXIN_API_KEY" envDefault:"nil"`
 	WenxinSecretKey string `env:"WENXIN_SECRET_KEY" envDefault:"nil"`
 	TongyiApiKey    string `env:"TONGYI_API_KEY" envDefault:"nil"`

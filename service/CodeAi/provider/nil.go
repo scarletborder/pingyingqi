@@ -16,5 +16,5 @@ func (n *Nil) Prompt(string) (string, error) {
 This may caused by your not offering any AISERVICE_PROVIDER setting.
 You can change the AISERVICE_PROVIDER in your "config/*.env".
 Also, if all AI providers can not prompt, it will also cause this problem
-You may need to check your AI providers' authentication in log`, 1, nil
+You may need to check your AI providers' authentication in log`, nil
 }

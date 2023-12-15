@@ -5,7 +5,9 @@ import (
 	"os"
 )
 
-// 包装code
+/** 包装code
+ * @return string 完整的prompt(提供给json序列化)
+ */
 func WrapperCode(code string, lang string) (string, error) {
 	f, err := os.ReadFile("./service/CodeAi/wrapper.txt")
 	if err != nil {

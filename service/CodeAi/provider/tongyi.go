@@ -15,6 +15,6 @@ func (t *Tongyi) GetServiceName() string {
 	return t.serviceName
 }
 
-func (t *Tongyi) Prompt(string) (string, error) {
-	return "123"
+func (t *Tongyi) Prompt(myPrompt string) (string, error) {
+	
 }
