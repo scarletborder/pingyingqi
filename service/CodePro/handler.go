@@ -24,24 +24,25 @@ type server struct {
 func (s *server) CodePro(ctx context.Context, in *myrpc.CodeProRequest) (*myrpc.CodeProResp, error) {
 	var data string
 	var code int
+	var extraInfo string
 	var code32 int32
 	var err error
 	// 如果config设置优先ai，那么直接丢给ai
 	if config.EnvCfg.CompilerQueue == 1 {
-		data, code = codeai.MainPrompt(in.Code, in.Lang)
-		return &myrpc.CodeProResp{Data: data, Code: int32(code)}, nil
+		data, extraInfo, code = codeai.MainPrompt(in.Code, in.Lang)
+		return &myrpc.CodeProResp{Data: data, Code: int32(code), Extra: extraInfo}, nil
 	}
 
 	// 人工CodeManual
 	if cm.CodeMan.CouldProgram(in.Lang) {
 		data, code32, err = cm.CodeMan.Exec(in.Code, in.Lang)
-		return &myrpc.CodeProResp{Data: data, Code: code32}, err
+		return &myrpc.CodeProResp{Data: data, Code: code32, Extra: ``}, err
 	}
 
 	// 缺省CodeAi
 	// ai()
-	data, code = codeai.MainPrompt(in.Code, in.Lang)
-	return &myrpc.CodeProResp{Data: data, Code: int32(code)}, nil
+	data, extraInfo, code = codeai.MainPrompt(in.Code, in.Lang)
+	return &myrpc.CodeProResp{Data: data, Code: int32(code), Extra: extraInfo}, nil
 }
 
 func (s *server) Dislike(ctx context.Context, in *myrpc.DislikedPackage) (*myrpc.DislikedResp, error) {

@@ -18,6 +18,8 @@ message CodeProResp{
     * 3 - 编译运行成功但是运行时间过长  
     */
     int32 code = 2;
+    // 额外信息,一般是ai额外输出的
+    string extra = 3;
 }
 
 message DislikedPackage{

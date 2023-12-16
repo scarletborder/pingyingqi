@@ -25,12 +25,29 @@ type AiProviderResp struct {
 	Data string `json:"Data"`
 }
 
-func DecodeJson(inData string, inerr error) (data string, statusCode int, err error) {
+func DecodeJson(inData string, inerr error) (data string, extraInfo string, statusCode int, err error) {
 	if inerr != nil {
 		// 内部错误
 		err = inerr
 		return
 	}
+	jsonCodeBegin := strings.Index(inData, "```")
+	if jsonCodeBegin == -1 {
+		data = ``
+		extraInfo = inData
+		statusCode = 1
+		err = nil
+		return
+	}
+	jsonCodeEnd := strings.Index(inData[jsonCodeBegin+3:], "```")
+	if jsonCodeEnd == -1 {
+		data = ``
+		extraInfo = inData
+		statusCode = 1
+		err = nil
+		return
+	}
+	inData = inData[jsonCodeBegin : jsonCodeBegin+jsonCodeEnd+6]
 	inData = strings.Trim(inData, "`")
 	inData = strings.TrimSpace(inData)
 	inData = strings.Trim(inData, "json")
