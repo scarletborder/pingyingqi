@@ -2,6 +2,7 @@ package codeai
 
 import (
 	aiprovider "pingyingqi/models/AiProvider"
+	_ "pingyingqi/service/CodeAi/provider"
 
 	"github.com/sirupsen/logrus"
 )
@@ -21,6 +22,7 @@ func MainPrompt(code string, lang string) (string, string, int) {
 		return `inner wrong`, ``, 1
 	}
 
+	aiprovider.AiHelper.ResetQueue() // 按照default provider，重新规划顺序
 	for _, provider := range aiprovider.AiHelper.Provider {
 		data, extraInfo, statusCode, err = DecodeJson(provider.Prompt(code))
 		if err != nil {

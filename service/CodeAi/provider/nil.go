@@ -2,6 +2,7 @@ package provider
 
 import (
 	"encoding/json"
+	aiprovider "pingyingqi/models/AiProvider"
 )
 
 type Nil struct {
@@ -29,4 +30,8 @@ You may need to check your AI providers' authentication in log`}
 	ret, _ := json.Marshal(data)
 
 	return string(ret), nil
+}
+
+func init() {
+	aiprovider.AiHelper.Provider = append(aiprovider.AiHelper.Provider, NewNil())
 }

@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"pingyingqi/config"
+	aiprovider "pingyingqi/models/AiProvider"
 	"strings"
 	"time"
 
@@ -151,4 +152,15 @@ func (w *Wenxin) getAccessToken() (string, int, error) {
 		return ``, 0, errors.New("Request succeed, but " + ar.Errdesp)
 	}
 	return ar.AT, ar.Expires_in, nil
+}
+
+func init() {
+	if config.EnvCfg.WenxinApiKey != `` && config.EnvCfg.WenxinSecretKey != `` && config.EnvCfg.DefaultProvider != `nil` {
+		Wenxin, err := NewWenxin(config.EnvCfg.WenxinApiKey, config.EnvCfg.WenxinSecretKey)
+		if err != nil {
+			aiprovider.FailOnAiProviderCreate("wenxin", err)
+		} else {
+			aiprovider.AiHelper.Provider = append(aiprovider.AiHelper.Provider, Wenxin)
+		}
+	}
 }

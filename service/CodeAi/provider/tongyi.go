@@ -1,6 +1,10 @@
 package provider
 
-import "errors"
+import (
+	"errors"
+	"pingyingqi/config"
+	aiprovider "pingyingqi/models/AiProvider"
+)
 
 type Tongyi struct {
 	serviceName string
@@ -19,4 +23,10 @@ func (t *Tongyi) GetServiceName() string {
 
 func (t *Tongyi) Prompt(myPrompt string) (string, error) {
 	return ``, errors.New("没做好")
+}
+
+func init() {
+	if config.EnvCfg.TongyiApiKey != `` && config.EnvCfg.DefaultProvider != `nil` {
+		aiprovider.AiHelper.Provider = append(aiprovider.AiHelper.Provider, NewTongyi(config.EnvCfg.TongyiApiKey))
+	}
 }

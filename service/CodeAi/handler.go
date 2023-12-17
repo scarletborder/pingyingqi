@@ -47,6 +47,7 @@ func DecodeJson(inData string, inerr error) (data string, extraInfo string, stat
 		err = nil
 		return
 	}
+	extraInfo = inData[0:jsonCodeBegin] + inData[jsonCodeBegin+jsonCodeEnd+6:]
 	inData = inData[jsonCodeBegin : jsonCodeBegin+jsonCodeEnd+6]
 	inData = strings.Trim(inData, "`")
 	inData = strings.TrimSpace(inData)
