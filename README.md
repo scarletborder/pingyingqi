@@ -1,65 +1,25 @@
-# 凭依绮在线Code
-RPC微服务
-## 示例
-**当前示例内容为v0.0.1，接口已经在v1.0.0_alpha_a1后调整**   
-以下内容都是从作者的一个nonebot2插件扣下来的部分  
-### GoPro() and PyPro()
-```py
+# Pingyingqi Online compiling and running
+a practice of RPC micro service  
+English | [简体中文](docs/README-CN.md)
+
+## Usage Example
+Here is a call example written in Python  
+First, Copy `config/.env.template` and rename it to `.env.config`. And fill your config items.   
+You need to use the idl `idl/CodePro.proto` to generate an interface class.  
+Then, use it like this  
+
+```python
+from plugins.pypyq.idl import CodePro_pb2 as pb2
+from plugins.pypyq.idl import CodePro_pb2_grpc as pb2_grpc
+
 channel = grpc.insecure_channel("127.0.0.1:28966")
-if lang == "go":
-    msgList.append(MessageSegment.text("lang=golang\n"))
-    stub = pb2_grpc.ExlangProgramerStub(channel)
-    resp = stub.GoPro(pb2.ExlangRequest(code=code))
-
-elif lang == "py":
-    msgList.append(MessageSegment.text("lang=python\n"))
-    stub = pb2_grpc.ExlangProgramerStub(channel)
-    resp = stub.PyPro(pb2.ExlangRequest(code=code))
-    pass
-
-else:
-    msgList.append(MessageSegment.text("lang=nil\n"))
-    resp = pb2.ExlangResp(data="default fail", code=1)
-
-# according to the code, output different info
-if resp.code == 3:
-    msgList.append(
-        MessageSegment.text(
-            "WARNING:Your code compiled successfully but run too much time\n"
-        )
-    )
-    msgList.append(MessageSegment.text(resp.data))
-elif resp.code == 2:
-    msgList.append(
-        MessageSegment.text(
-            "ERROR:Your code contains some disabled package\n" + resp.data
-        )
-    )
-elif resp.code == 1:
-    msgList.append(MessageSegment.text("ERROR:Program failed\n" + resp.data))
-
-elif resp.code == 0:
-    msgList.append(MessageSegment.text(resp.data))
-else:
-    msgList.append(MessageSegment.text("ERROR:Inner wrong\n" + resp.data))
-
-await pypyq.finish(Message(msgList))
+msgList.append(MessageSegment.text(f"lang={lang}\n"))
+stub = pb2_grpc.CodeProProgramerStub(channel)
+resp = stub.CodePro(pb2.CodeProRequest(code=code, lang=lang))
 ```
+use the defined parameter `code` and `lang` previously, you can receive your result in `resp`.
 
-### Dislike()
-```py
-if lang := args.extract_plain_text():
-    myList = lang.split(" ")
-    if len(myList) < 2:
-        await pyqDis.finish("too few args")
-    data = ""
-    if myList[0] == "enable":
-        data += "0;"
-    else:
-        data += "1;"
-
-    channel = grpc.insecure_channel("127.0.0.1:28966")
-    stub = pb2_grpc.ExlangProgramerStub(channel)
-    resp = stub.Dislike(pb2.DislikedPackage(pack=data + myList[1]))
-    pass
-```
+## Extension
+You can create a provider to adapt other major language models under `pingyingqi/service/CodeAi/provider/`, following the examples already written.  
+Specifically, you need to implement the interface defined in `pingyingqi/models/AiProvider/interface` and define an init function. When the corresponding api_key configuration item in the configuration file is not empty, instantiate a provider and add it to the singleton `models/AiProvider/AiHelper.AiHelper`.  
+The program will load your provider during the init phase and call the `prompt()` method of your provider during the polling calls in the `Mainprompt()` method.  
