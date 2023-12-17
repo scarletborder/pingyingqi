@@ -12,6 +12,7 @@ import (
 	"pingyingqi/config"
 	redis2 "pingyingqi/utils/redis"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -126,6 +127,9 @@ func (g GoPro) Exec(code string, outData *string, statusCode *int32) {
 	//end new inspect
 
 	cmd = exec.Command("go", "run", "main.go")
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setpgid: true, //使得 Shell 进程开辟新的 PGID, 即 Shell 进程的 PID, 它后面创建的所有子进程都属于该进程组
+	}
 	cmd.Dir = tempPath
 	var outBut bytes.Buffer
 	cmd.Stdout = io.MultiWriter(io.Discard, &outBut)
@@ -150,7 +154,7 @@ func (g GoPro) Exec(code string, outData *string, statusCode *int32) {
 	for {
 		select {
 		case <-proTimer.C:
-			cmd.Process.Kill()
+			syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 			*outData = outBut.String()
 			*statusCode = 3
 			return
