@@ -12,6 +12,7 @@ import (
 	"pingyingqi/config"
 	redis2 "pingyingqi/utils/redis"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -78,6 +79,9 @@ func (p PyPro) Exec(code string, outData *string, statusCode *int32) {
 	}
 
 	cmd := exec.Command("python", "main.py")
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setpgid: true, //使得 Shell 进程开辟新的 PGID, 即 Shell 进程的 PID, 它后面创建的所有子进程都属于该进程组
+	}
 	cmd.Dir = tempPath
 	var outBut bytes.Buffer
 	cmd.Stdout = io.MultiWriter(io.Discard, &outBut)
@@ -102,7 +106,14 @@ func (p PyPro) Exec(code string, outData *string, statusCode *int32) {
 	for {
 		select {
 		case <-proTimer.C:
-			cmd.Process.Kill()
+			p, err := os.FindProcess(cmd.Process.Pid)
+			if err != nil {
+				logrus.Errorf("Couldn't close process, %s", err.Error())
+			}
+			err = p.Kill()
+			if err != nil {
+				logrus.Errorf("Couldn't close process, %s", err.Error())
+			}
 			*outData = outBut.String()
 			*statusCode = 3
 			return
