@@ -6,10 +6,6 @@ import (
 	mapset "github.com/deckarep/golang-set"
 )
 
-type ExecInterface interface {
-	Exec(string, *string, *int32)
-}
-
 type CodeManual struct {
 	lang      mapset.Set
 	langAlias map[string]string
