@@ -106,14 +106,7 @@ func (p PyPro) Exec(code string, outData *string, statusCode *int32) {
 	for {
 		select {
 		case <-proTimer.C:
-			p, err := os.FindProcess(cmd.Process.Pid)
-			if err != nil {
-				logrus.Errorf("Couldn't close process, %s", err.Error())
-			}
-			err = p.Kill()
-			if err != nil {
-				logrus.Errorf("Couldn't close process, %s", err.Error())
-			}
+			syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 			*outData = outBut.String()
 			*statusCode = 3
 			return
